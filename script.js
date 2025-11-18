@@ -4,28 +4,38 @@ document.addEventListener('DOMContentLoaded', () => {
         en: {
             subtitle: "Full Stack Creator",
             about_title: "About Me",
-            about_p: "Welcome to my creative space. I am a Full Stack Creator, blending the art of design with the precision of code. My passion lies in building beautiful, functional, and user-centric digital experiences. From concept to deployment, I bring ideas to life.",
+            about_p: "I’m David Gvakharia — an Economics student who fell in love with art. I enjoy creating 3D visuals, moods, and little stories that feel alive. Art helps me say things words can’t. I’m always learning, trying new styles, and pushing myself to get better with every project. My goal is simple — to create something that connects with people and leaves a small feeling behind.",
             featured_title: "Featured Work",
             skills_title: "Skills & Software",
             skills_cat1_title: "Creative & Technical Skills",
             skills_cat2_title: "Software",
             gallery_title: "Artwork Gallery",
             gallery_p: "A selection of my recent creations. Click any image to view it in full screen.",
+            captures_title: "Captures",
+            captures_p: "A selection of my recent captures. Click any image to view it in full screen.",
             footer_contact: "Get in touch:",
-            modal_software: "Software: Cinema 4D & Octane Renderer"
+            videos_title: "Videos",
+            videos_p: "A selection of my video projects. Click to watch.",
+            modal_software: "Software: Cinema 4D & Octane Renderer",
+            modal_camera: "Camera: Sony HX-300"
         },
         ge: {
             subtitle: "Full Stack დეველოპერი",
             about_title: "ჩემს შესახებ",
-            about_p: "კეთილი იყოს თქვენი მობრძანება ჩემს შემოქმედებით სივრცეში. მე ვარ Full Stack დეველოპერი, რომელიც აერთიანებს დიზაინის ხელოვნებასა და კოდის სიზუსტეს. ჩემი გატაცებაა ლამაზი, ფუნქციური და მომხმარებელზე ორიენტირებული ციფრული გამოცდილების შექმნა. კონცეფციიდან საბოლოო პროდუქტამდე, მე ვაცოცხლებ იდეებს.",
+            about_p: "მე ვარ ეკონომიკის სტუდენტი, რომელსაც ხელოვნება შემოეყვარა. მსიამოვნებს 3D ვიზუალიზაციების, განწყობების და პატარა ისტორიების შექმნა, რომლებიც ცოცხალ შეგრძნებას ტოვებს. ხელოვნება მეხმარება ისეთი რაღაცები ვთქვა, რასაც სიტყვები ვერ ამბობს. სულ ვსწავლობ, ვცდი ახალ სტილებს და ვცდილობ, რომ ყოველი პროექტით გავუმჯობესდე. ჩემი მიზანი მარტივია — შევქმნა ისეთი რამ, რაც ადამიანებთან კავშირს დაამყარებს და პატარა შეგრძნებას დატოვებს.",
             featured_title: "გამორჩეული ნამუშევარი",
             skills_title: "უნარები და პროგრამები",
             skills_cat1_title: "უნარები",
             skills_cat2_title: "პროგრამები",
             gallery_title: "ნამუშევრები",
             gallery_p: "ნამუშევრების კრებული. დააჭირეთ სურათს სრულ ეკრანზე სანახავად.",
+            captures_title: "ფოტოები",
+            captures_p: "",
+            videos_title: "ვიდეოები",
+            videos_p: "ჩემი ვიდეო პროექტების კრებული. დააჭირეთ საყურებლად.",
             footer_contact: "დამიკავშირდით:",
-            modal_software: "პროგრამები: Cinema 4D & Octane Renderer"
+            modal_software: "პროგრამები: Cinema 4D & Octane Renderer",
+            modal_camera: "კამერა: Sony HX-300"
         }
     };
 
@@ -88,19 +98,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- GALLERY CREATION ---
-    const galleryGrid = document.getElementById('gallery-grid');
-    const galleryLoader = document.getElementById('gallery-loader');
+    const mainContent = document.querySelector('main');
+    let galleryData = {}; // Object to hold items for each gallery
 
     // This new, more robust function finds your images automatically.
-    async function generateGallery() {
-        const pageLoader = document.getElementById('page-loader');
+    async function populateGallery(folder, gridId, loaderId) {
+        const galleryGrid = document.getElementById(gridId);
+        const galleryLoader = document.getElementById(loaderId);
+        if (!galleryGrid || !galleryLoader) return;
+
         galleryLoader.style.display = 'block'; // Ensure loader is visible
         const imagePromises = [];
 
         // Create a list of potential image paths to check
         for (let i = 1; i <= MAX_ARTWORKS_TO_CHECK; i++) {
-            const jpgPath = `artworks/${i}.jpg`;
-            const pngPath = `artworks/${i}.png`;
+            const jpgPath = `${folder}/${i}.jpg`;
+            const pngPath = `${folder}/${i}.png`;
 
             // Create a promise for each potential image
             const checkImage = (path) => new Promise((resolve, reject) => {
@@ -125,12 +138,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Sort them by their number to ensure correct order
         foundImages.sort((a, b) => a.number - b.number);
 
-        // ** THE FIX **: Store the sorted list for keyboard navigation.
-        orderedGalleryItems = foundImages;
+        // Store the sorted list for this specific gallery
+        galleryData[gridId] = foundImages;
 
         // Create and append the gallery items in the correct order
         foundImages.forEach(({ path, number }) => {
-            const thumbPath = `artworks/thumbs/${path.split('/')[1]}`;
+            const thumbPath = `${folder}/thumbs/${path.split('/')[1]}`;
 
             const galleryItem = document.createElement('div');
             galleryItem.className = 'gallery-item';
@@ -142,18 +155,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Hide the loader after everything is done
         galleryLoader.style.display = 'none';
+    }
 
-        // Hide the main page loader
-        if (pageLoader) {
-            pageLoader.classList.add('hidden');
+    async function populateVideoGallery() {
+        try {
+            const response = await fetch('videos.json');
+            if (!response.ok) return;
+            const videos = await response.json();
+            const videoGrid = document.getElementById('video-grid');
+            if (!videoGrid) return;
+
+            videos.forEach(video => {
+                const videoItem = document.createElement('div');
+                videoItem.className = 'video-item';
+                videoItem.dataset.videoId = video.videoId;
+                // Automatically generate YouTube thumbnail URL
+                const thumbnailUrl = `https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`;
+                videoItem.innerHTML = `<img src="${thumbnailUrl}" alt="${video.title}">`;
+                videoGrid.appendChild(videoItem);
+            });
+
+        } catch (error) {
+            console.error("Could not load video data:", error);
         }
     }
+
 
     let orderedGalleryItems = [];
     let currentImageIndex = -1;
 
-    generateGallery();
+    // New function to orchestrate all content loading
+    async function loadAllContent() {
+        const pageLoader = document.getElementById('page-loader');
+        document.body.classList.add('loading'); // Hide scrollbar
 
+        // Run all gallery population tasks in parallel
+        await Promise.all([
+            populateGallery('artworks', 'gallery-grid', 'gallery-loader'),
+            populateGallery('captures', 'captures-grid', 'captures-loader'),
+            populateVideoGallery()
+        ]);
+
+        // Hide the main page loader and restore scrollbar after everything is done
+        pageLoader.classList.add('hidden');
+        document.body.classList.remove('loading');
+    }
+
+    loadAllContent();
     // --- MODAL (FULLSCREEN) LOGIC ---
     const modal = document.getElementById('modal');
     const modalImg = document.getElementById('modal-img');
@@ -161,6 +209,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeModal = document.querySelector('.close-modal');
     const modalPrev = document.getElementById('modal-prev');
     const modalNext = document.getElementById('modal-next');
+    const modalVideoContainer = document.getElementById('modal-video-container');
+    const softwareInfo = document.querySelector('.software-info');
     let modalSlides = [];
     let currentModalSlide = 0;
 
@@ -173,23 +223,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- KEYBOARD NAVIGATION & MODAL CLOSING ---
     function handleKeyDown(e) {
-        if (modal.style.display !== 'flex') return;
+        if (!modal.classList.contains('visible')) return;
 
         switch (e.key) {
             case 'Escape':
                 closeTheModal();
                 break;
             case 'ArrowRight':
-                // If it's a slider, use the slider's own navigation
-                if (modalNext.style.display === 'block') {
+                // If it's an internal slider (not a single gallery image)
+                if (modalSliderContent.style.display === 'block') {
                     modalNext.click();
                 } else { // Otherwise, navigate the main gallery
                     navigateToGalleryImage(1);
                 }
                 break;
             case 'ArrowLeft':
-                // If it's a slider, use the slider's own navigation
-                if (modalPrev.style.display === 'block') {
+                // If it's an internal slider (not a single gallery image)
+                if (modalSliderContent.style.display === 'block') {
                     modalPrev.click();
                 } else { // Otherwise, navigate the main gallery
                     navigateToGalleryImage(-1);
@@ -201,6 +251,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function closeTheModal() {
         modal.classList.remove('visible');
         document.body.classList.remove('modal-open');
+        // Stop video playback when closing modal
+        if (modalVideoContainer) {
+            modalVideoContainer.innerHTML = '';
+        }
         document.removeEventListener('keydown', handleKeyDown);
     }
 
@@ -209,25 +263,38 @@ document.addEventListener('DOMContentLoaded', () => {
     function navigateToGalleryImage(direction) {
         if (orderedGalleryItems.length === 0) return;
 
+        // Prevent multiple clicks during animation
+        if (modalImg.classList.contains('modal-img-out-left') || modalImg.classList.contains('modal-img-out-right')) {
+            return;
+        }
+
         const newIndex = currentImageIndex + direction;
 
         // Prevent looping: check if the new index is out of bounds.
         if (newIndex < 0 || newIndex >= orderedGalleryItems.length) {
             return; // Do nothing if we are at the beginning or end.
         }
+        
+        // 1. Animate the current image out
+        const outClass = direction === 1 ? 'modal-img-out-left' : 'modal-img-out-right';
+        modalImg.classList.add(outClass);
 
-        // If the move is valid, update the index and proceed.
-        currentImageIndex = newIndex;
-        const newPath = orderedGalleryItems[newIndex].path;
+        // After the 'out' animation finishes, swap the image and animate it 'in'
+        setTimeout(() => {
+            currentImageIndex = newIndex;
+            const newPath = orderedGalleryItems[newIndex].path;
+            modalImg.src = newPath;
+            updateGalleryNavButtons();
 
-        // Ensure we are in single-image view mode
-        modalImg.style.display = 'block';
-        modalSliderContent.style.display = 'none';
-        modalPrev.style.display = 'none';
-        modalNext.style.display = 'none';
+            // Remove the 'out' class and prepare the 'in' animation by positioning it off-screen
+            const inClass = direction === 1 ? 'modal-img-in-from-right' : 'modal-img-in-from-left';
+            modalImg.classList.remove(outClass);
+            modalImg.classList.add(inClass);
 
-        updateGalleryNavButtons();
-        modalImg.src = newPath;
+            // Force a reflow, then remove the 'in' class to trigger the transition to the center
+            void modalImg.offsetWidth;
+            modalImg.classList.remove(inClass);
+        }, 300); // This timeout should match the CSS transition duration
     }
 
     function updateGalleryNavButtons() {
@@ -236,13 +303,50 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // --- EVENT LISTENERS ---
 
-    galleryGrid.addEventListener('click', (e) => {
+    // Use event delegation on the main element to handle clicks from any gallery
+    mainContent.addEventListener('click', (e) => {
         const item = e.target.closest('.gallery-item');
-        if (!item) return;
+        const videoItem = e.target.closest('.video-item');
+
+        if (!item && !videoItem) return;
 
         modal.classList.add('visible');
         document.body.classList.add('modal-open');
-        
+
+        // Hide all content containers initially
+        modalImg.style.display = 'none';
+        modalSliderContent.style.display = 'none';
+        modalVideoContainer.style.display = 'none';
+        softwareInfo.style.display = 'none';
+        modalPrev.classList.add('hidden');
+        modalNext.classList.add('hidden');
+
+        if (videoItem) {
+            const videoId = videoItem.dataset.videoId;
+            modalVideoContainer.style.display = 'block';
+            modalVideoContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+            return; // Stop here for videos
+        }
+
+        const parentGridId = item.closest('.gallery-grid').id;
+        orderedGalleryItems = galleryData[parentGridId] || [];
+
+        // Update the info text based on which gallery was clicked
+        const currentLang = localStorage.getItem('portfolio_lang') || 'en';
+        if (parentGridId === 'captures-grid') {
+            softwareInfo.dataset.langKey = 'modal_camera';
+            softwareInfo.style.display = 'block';
+            if (translations[currentLang]) {
+                softwareInfo.textContent = translations[currentLang].modal_camera;
+            }
+        } else { // Default to artworks
+            softwareInfo.dataset.langKey = 'modal_software';
+            softwareInfo.style.display = 'block';
+            if (translations[currentLang]) {
+                softwareInfo.textContent = translations[currentLang].modal_software;
+            }
+        }
+
         document.addEventListener('keydown', handleKeyDown);
 
         const clickedPath = item.dataset.src;
@@ -252,8 +356,8 @@ document.addEventListener('DOMContentLoaded', () => {
             modalImg.src = item.dataset.src;
             modalImg.style.display = 'block';
             modalSliderContent.style.display = 'none';
-            modalPrev.style.display = 'none';
-            modalNext.style.display = 'none';
+            modalPrev.style.display = 'block';
+            modalNext.style.display = 'block';
             updateGalleryNavButtons();
         } else if (item.dataset.slider) {
             modalSlides = JSON.parse(item.dataset.slider);
@@ -330,4 +434,36 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set initial language from storage or default to 'en'
     const savedLang = localStorage.getItem('portfolio_lang') || 'en';
     setLanguage(savedLang);
+
+    // --- Console Protection (Deterrents) ---
+
+    // 1. Disable Right-Click Context Menu
+    document.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+    });
+
+    // 2. Disable Common Developer Keyboard Shortcuts
+    document.addEventListener('keydown', (e) => {
+        // Disable F12
+        if (e.key === 'F12') {
+            e.preventDefault();
+        }
+        // Disable Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C
+        if (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key.toUpperCase())) {
+            e.preventDefault();
+        }
+        // Disable Ctrl+U (View Source)
+        if (e.ctrlKey && e.key.toUpperCase() === 'U') {
+            e.preventDefault();
+        }
+    });
+
+    // 3. Implement a debugger trap to make the console difficult to use.
+    // This will repeatedly pause execution if the developer tools are open.
+    function startDebuggerTrap() {
+        setInterval(() => {
+            debugger;
+        }, 500);
+    }
+    // startDebuggerTrap(); // Uncomment this line to re-enable the console protection.
 });

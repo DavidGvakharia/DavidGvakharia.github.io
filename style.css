@@ -97,6 +97,11 @@ body.lang-ge {
     animation: spin 0.3s linear infinite; /* <-- Change this value for the page loader */
 }
 
+/* Class to disable scrolling while the page loader is active */
+body.loading {
+    overflow: hidden;
+}
+
 /* Class to disable scrolling when the modal is open */
 body.modal-open {
     overflow: hidden;
@@ -317,7 +322,7 @@ main h3 {
 
 .gallery-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1rem;
 }
 
@@ -328,6 +333,7 @@ main h3 {
     overflow: hidden;
     cursor: pointer;
     transition: transform 0.3s, box-shadow 0.3s;
+    user-select: none; /* Prevent text selection */
 }
 
 .gallery-item:hover {
@@ -350,6 +356,59 @@ main h3 {
     background-color: rgba(0, 0, 0, 0.6);
     border-radius: 4px;
     padding: 4px;
+}
+
+/* --- Video Grid --- */
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.video-item {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    user-select: none;
+}
+
+.video-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.video-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Play icon overlay */
+.video-item::after {
+    content: '▶';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1.5);
+    font-size: 2rem;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s, background-color 0.3s;
+    opacity: 0.8;
+}
+
+.video-item:hover::after {
+    transform: translate(-50%, -50%) scale(1.7);
+    background-color: rgba(0,0,0,0.7);
 }
 
 /* --- Footer --- */
@@ -431,6 +490,27 @@ footer {
     display: block;
     /* Ensures the image fits within the bounds without stretching */
     object-fit: contain;
+    transition: transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease;
+}
+
+/* Animation classes for gallery navigation */
+.modal-img-out-left {
+    transform: translateX(-100px);
+    opacity: 0;
+    filter: blur(5px);
+}
+
+.modal-img-out-right {
+    transform: translateX(100px);
+    opacity: 0;
+    filter: blur(5px);
+}
+
+.modal-img-in-from-left {
+    transform: translateX(-100px);
+}
+.modal-img-in-from-right {
+    transform: translateX(100px);
 }
 
 .modal-slider-content { position: relative; }
@@ -442,6 +522,20 @@ footer {
     object-fit: contain;
 }
 
+.modal-video-container {
+    width: 90%;
+    height: 90%;
+    display: none; /* Hidden by default */
+}
+
+.modal-video-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 8px;
+}
+
+
 .close-modal {
     position: absolute;
     top: 15px; right: 35px;
@@ -449,6 +543,7 @@ footer {
     font-size: 40px;
     font-weight: bold;
     cursor: pointer;
+    user-select: none; /* Prevent text selection */
     z-index: 10; /* Ensure it's above all modal content */
 }
 
