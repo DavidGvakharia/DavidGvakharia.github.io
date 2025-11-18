@@ -1,0 +1,520 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300;400;700&family=Saira:wght@300;400;700&display=swap');
+
+:root {
+    --background: #121212;
+    --surface: #1e1e1e;
+    --primary-text: #ffffff;
+    --secondary-text: #d3d3d3;
+    --accent: #ffae00;
+    --accent-hover: #ffd900;
+    --border-color: #333;
+    --font-english: 'Saira', 'Segoe UI', 'Roboto', sans-serif;
+    --font-georgian: 'Noto Sans Georgian', sans-serif;
+    --font-family: var(--font-english); /* Default font */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f100;
+  
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 99px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #00000000;
+}
+
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--background);
+    color: var(--primary-text);
+    line-height: 1.6;
+}
+
+body.lang-ge {
+    --font-family: var(--font-georgian);
+}
+
+/* --- Page Loader --- */
+#page-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--background);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease;
+}
+
+#page-loader.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loader-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loader-pfp {
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.loader-spinner {
+    position: absolute;
+    width: 300px; /* Must be larger than the PFP */
+    height: 300px;
+    border: 8px solid transparent;
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.3s linear infinite; /* <-- Change this value for the page loader */
+}
+
+/* Class to disable scrolling when the modal is open */
+body.modal-open {
+    overflow: hidden;
+}
+
+.lang-switcher {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    background-color: rgba(0,0,0,0.2);
+    padding: 0.25rem;
+    border-radius: 8px;
+    z-index: 10;
+}
+
+.lang-btn {
+    background: none;
+    border: none;
+    color: var(--secondary-text);
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.lang-btn.active {
+    background-color: var(--accent);
+    color: var(--background);
+}
+
+.document-view {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem 4rem;
+    background-color: var(--surface);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border-radius: 16px;
+}
+
+/* --- Header / Intro --- */
+.intro {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 3rem;
+}
+
+.pfp {
+    position: relative; /* Needed to position the pseudo-element */
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Create the animated gradient shadow */
+.pfp::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    /* Create a conic gradient using your accent colors */
+    background: conic-gradient(from 180deg at 50% 50%, var(--accent-hover) 0deg, var(--accent) 50%, var(--accent-hover) 360deg);
+    filter: blur(15px); /* Blur the gradient to create a soft shadow effect */
+    z-index: -1; /* Place it behind the profile picture */
+    animation: rotate-pfp-shadow 4s linear infinite; /* Apply the rotation animation */
+}
+
+.intro-text h1 {
+    font-size: 3rem;
+    color: var(--primary-text);
+    margin-bottom: 0.15rem;
+}
+
+.intro-text h2 {
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--accent);
+}
+
+/* --- Main Content --- */
+main section {
+    margin-bottom: 3rem;
+}
+
+main h3 {
+    font-size: 1.8rem;
+    color: var(--primary-text);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+#about p {
+    font-size: 1.1rem;
+    color: var(--secondary-text);
+}
+
+/* --- Featured Artwork Comparison Slider --- */
+.comparison-slider {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: 8px;
+    cursor: ew-resize; /* East-West resize cursor indicates horizontal sliding */
+}
+
+.comparison-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none; /* Prevents images from interfering with mouse events */
+}
+
+.image-after {
+    /* We will clip this image with JavaScript */
+    clip-path: inset(0 50% 0 0);
+    z-index: 2;
+    transition: clip-path 0.4s ease;
+}
+
+.image-before {
+    z-index: 1;
+}
+
+.comparison-handle {
+    position: absolute;
+    top: 0;
+    left: 50%; /* Start in the middle */
+    transform: translateX(-50%);
+    width: 4px;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.7);
+    transition: left 0.4s ease;
+    z-index: 3;
+    pointer-events: none; /* The container will handle mouse events */
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+/* --- Skills Section --- */
+.skills-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+}
+
+.skill-category h4 {
+    font-size: 1.4rem;
+    color: var(--primary-text);
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+.skill-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+}
+
+.skill-name {
+    color: var(--secondary-text);
+    font-size: 1.2rem;
+}
+
+.star-rating {
+    color: var(--accent);
+    font-size: 1.5rem;
+    letter-spacing: 5px;
+}
+
+.star-rating .empty-star {
+    color: var(--border-color);
+}
+
+/* --- Loader --- */
+.loader {
+    border: 4px solid var(--border-color);
+    border-top: 4px solid var(--accent);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 0.8s linear infinite; /* <-- Change this value for the gallery loader */
+    margin: 4rem auto; /* Center it within the grid before content loads */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Keyframes for the PFP shadow rotation */
+@keyframes rotate-pfp-shadow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+/* --- Gallery --- */
+#gallery p {
+    color: var(--secondary-text);
+    margin-bottom: 2rem;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.gallery-item {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.gallery-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.slider-icon {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 4px;
+    padding: 4px;
+}
+
+/* --- Footer --- */
+footer {
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+    color: var(--secondary-text);
+}
+
+.social-links {
+    margin: 1rem 0;
+}
+
+.social-links a {
+    color: var(--accent);
+    text-decoration: none;
+    margin: 0 1rem;
+    font-size: 1.1rem;
+    transition: color 0.3s;
+}
+
+.social-links a:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+}
+
+.copyright {
+    font-size: 0.9rem;
+    margin-top: 1rem;
+}
+
+/* --- Modal (Fullscreen Image) --- */
+.modal {
+    display: flex; /* Always use flex for centering */
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    justify-content: center;
+    align-items: center;
+
+    /* Animation properties */
+    opacity: 0;
+    pointer-events: none;
+    backdrop-filter: blur(0px);
+    transition: opacity 0.4s ease, backdrop-filter 0.4s ease;
+}
+
+.modal.visible {
+    opacity: 1;
+    pointer-events: auto;
+    backdrop-filter: blur(8px); /* Apply blur when visible */
+}
+
+.modal-content-wrapper {
+    position: relative;
+    /* Allow the container to fill the screen */
+    width: 100%;
+    height: 100%;
+    /* Add flex properties to center the image inside */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: scale(0.95);
+    opacity: 0;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.modal.visible .modal-content-wrapper {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.modal-content, .modal-slider-content {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    /* Ensures the image fits within the bounds without stretching */
+    object-fit: contain;
+}
+
+.modal-slider-content { position: relative; }
+
+/* Apply the same object-fit rule to images inside the slider */
+.modal-slider-content img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px; right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10; /* Ensure it's above all modal content */
+}
+
+.software-info {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: var(--secondary-text);
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    z-index: 11;
+    pointer-events: none; /* Make sure it doesn't block clicks */
+}
+
+.modal-nav {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 16px;
+    color: white;
+    font-weight: bold;
+    font-size: 2rem;
+    transition: 0.3s ease;
+    user-select: none;
+    background-color: rgba(0,0,0,0.3);
+}
+.modal-nav.prev { left: -60px; }
+.modal-nav.next { right: -60px; }
+.modal-nav:hover { background-color: rgba(0,0,0,0.6); }
+.modal-nav.hidden {
+    display: none;
+}
+
+
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+    .document-view {
+        margin: 0;
+        padding: 1rem 1.5rem;
+        border: none;
+    }
+    .lang-switcher {
+        top: 0.5rem;
+        right: 0.5rem;
+    }
+    .modal-content-wrapper {
+        /* On mobile, add a small padding so the image doesn't touch the edges */
+        max-width: calc(100vw - 20px);
+        max-height: calc(100vh - 20px);
+    }
+    .intro {
+        flex-direction: column;
+        text-align: center;
+    }
+    .skills-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    .software-info {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .modal-nav.prev { left: 5px; }
+    .modal-nav.next { right: 5px; }
+}

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>David Gvakharia - Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Full Page Loader -->
+    <div id="page-loader">
+        <div class="loader-container">
+            <img src="pfp/DG PFP.jpg" alt="Loading..." class="loader-pfp">
+            <div class="loader-spinner"></div>
+        </div>
+    </div>
+
+    <div class="document-view">
+        <div class="lang-switcher">
+            <button class="lang-btn active" data-lang="en">EN</button>
+            <button class="lang-btn" data-lang="ge">GE</button>
+        </div>
+
+        <header class="intro">
+            <img src="pfp/DG PFP.jpg" alt="David Gvakharia's Profile Picture" class="pfp">
+            <div class="intro-text">
+                <h1>David Gvakharia</h1>
+                <h2 data-lang-key="subtitle">Full Stack Creator</h2>
+            </div>
+        </header>
+
+        <main>
+            <section id="about">
+                <h3 data-lang-key="about_title">About Me</h3>
+                <p data-lang-key="about_p">
+                    Welcome to my creative space. I am a Full Stack Creator, blending the art of design with the precision of code. My passion lies in building beautiful, functional, and user-centric digital experiences. From concept to deployment, I bring ideas to life.
+                </p>
+            </section>
+
+            <section id="featured-artwork">
+                <h3 data-lang-key="featured_title">Featured Work</h3>
+                <div class="comparison-slider" id="featured-comparison-slider">
+                    <!-- The "After" image (top layer) -->
+                    <img src="assets/Good Life final render.jpg" alt="Final Render" class="comparison-image image-after">
+                    <!-- The "Before" image (bottom layer) -->
+                    <img src="assets/Good Life clay.jpg" alt="Clay Model" class="comparison-image image-before">
+                    <!-- The draggable handle -->
+                    <div class="comparison-handle"></div>
+                </div>
+            </section>
+
+            <section id="skills">
+                <h3 data-lang-key="skills_title">Skills & Software</h3>
+                <div class="skills-container">
+                    <div class="skill-category">
+                        <h4 data-lang-key="skills_cat1_title">Creative & Technical Skills</h4>
+                        <div class="skill-item">
+                            <span class="skill-name">3D Modeling</span>
+                            <div class="star-rating" title="5 out of 5">★★★★★</div>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">3D Animation</span>
+                            <div class="star-rating" title="4 out of 5">★★★<span class="empty-star">★★</span></div>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">3D Rendering</span>
+                            <div class="star-rating" title="5 out of 5">★★★★★</div>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">Video Editing</span>
+                            <div class="star-rating" title="4 out of 5">★★★★<span class="empty-star">★</span></div>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">Music</span>
+                            <div class="star-rating" title="3 out of 5">★★★<span class="empty-star">★★</span></div>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">Graphic Design</span>
+                            <div class="star-rating" title="5 out of 5">★★★★★</div>
+                        </div>
+                    </div>
+                    <div class="skill-category">
+                        <h4 data-lang-key="skills_cat2_title">Software</h4>
+                        <div class="skill-item">
+                            <span class="skill-name">Cinema 4D</span>
+                            <div class="star-rating" title="5 out of 5">★★★★★</div>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">Octane Renderer</span>
+                            <div class="star-rating" title="5 out of 5">★★★★★</div>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">Adobe Premiere Pro</span>
+                            <div class="star-rating" title="4 out of 5">★★★★<span class="empty-star">★</span></div>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">Adobe Illustrator</span>
+                            <div class="star-rating" title="4 out of 5">★★★★<span class="empty-star">★</span></div>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">Adobe Photoshop</span>
+                            <div class="star-rating" title="4 out of 5">★★★<span class="empty-star">★★</span></div>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">Adobe Lightroom</span>
+                            <div class="star-rating" title="4 out of 5">★★★<span class="empty-star">★★</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="gallery">
+                <h3 data-lang-key="gallery_title">Artwork Gallery</h3>
+                <p data-lang-key="gallery_p">A selection of my recent creations. Click any image to view it in full screen.</p>
+                <div class="gallery-grid" id="gallery-grid">
+                    <!-- Loader will be visible while gallery images are discovered -->
+                    <div class="loader" id="gallery-loader"></div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p data-lang-key="footer_contact">Get in touch:</p>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/david-gvakharia/" target="_blank">LinkedIn</a>
+                <a href="https://www.youtube.com/@David-GX5" target="_blank">YouTube</a>
+                <a href="https://www.facebook.com/DavitPNG" target="_blank">Facebook</a>
+                <a href="https://www.instagram.com/davit_png/" target="_blank">Instagram</a>
+            </div>
+            <p class="copyright">&copy; <span id="current-year">2024</span> David Gvakharia. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Fullscreen Image Modal -->
+    <div id="modal" class="modal">
+        <span class="close-modal">&times;</span>
+        <div class="modal-content-wrapper">
+            <img class="modal-content" id="modal-img">
+            <div class="modal-slider-content" id="modal-slider-content">
+                <!-- Slider images will be injected here -->
+            </div>
+             <button class="modal-nav prev" id="modal-prev">&lt;</button>
+             <button class="modal-nav next" id="modal-next">&gt;</button>
+        </div>
+        <div class="software-info" data-lang-key="modal_software">Software: Cinema 4D & Octane Renderer</div>
+        <div id="caption"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
